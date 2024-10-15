@@ -2,7 +2,7 @@ import openai
 from PyQt5.QtCore import QThread, pyqtSignal
 
 
-class ChatGPTThread(QThread):
+class ChatGPT(QThread):
     response_signal = pyqtSignal(str)
 
     def __init__(self, api_key):
@@ -29,6 +29,8 @@ class ChatGPTThread(QThread):
 
                 self.response_signal.emit(reply)
                 self.question = ""
+                self.sleep(5)
+
 
     def ask_chatgpt(self, question):
         self.question = question

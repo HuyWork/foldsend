@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'mainwindow.ui'
+# Form implementation generated from reading ui file 'main_window.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.11
 #
@@ -20,98 +20,6 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.centralwidget)
         self.gridLayout_2.setObjectName("gridLayout_2")
-        self.timeEdit = QtWidgets.QTimeEdit(self.centralwidget)
-        self.timeEdit.setReadOnly(True)
-        self.timeEdit.setButtonSymbols(QtWidgets.QAbstractSpinBox.NoButtons)
-        self.timeEdit.setObjectName("timeEdit")
-        self.gridLayout_2.addWidget(self.timeEdit, 0, 0, 1, 1)
-        self.setTimeBtn = QtWidgets.QPushButton(self.centralwidget)
-        self.setTimeBtn.setStyleSheet("QPushButton {\n"
-"    border: 1px solid gray; \n"
-"    border-radius: 10px;     \n"
-"    padding: 5px;\n"
-"    background-color: rgb(225, 225, 225);\n"
-"}\n"
-"")
-        self.setTimeBtn.setObjectName("setTimeBtn")
-        self.gridLayout_2.addWidget(self.setTimeBtn, 0, 1, 1, 1)
-        self.infoLbl = QtWidgets.QLabel(self.centralwidget)
-        self.infoLbl.setStyleSheet("QLabel {\n"
-"    background-color: rgba(255, 255, 255, 1);\n"
-"    border: 1px solid black;\n"
-"    border-radius: 5px;\n"
-"    padding: 8px\n"
-"}")
-        self.infoLbl.setText("")
-        self.infoLbl.setObjectName("infoLbl")
-        self.gridLayout_2.addWidget(self.infoLbl, 0, 2, 2, 1)
-        self.countDownLbl = QtWidgets.QLabel(self.centralwidget)
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        font.setBold(False)
-        font.setWeight(50)
-        self.countDownLbl.setFont(font)
-        self.countDownLbl.setStyleSheet("QLabel{\n"
-"    background-color: rgba(255, 255, 255, 1);\n"
-"    border: 1px solid black;\n"
-"    border-radius: 5px;\n"
-"}")
-        self.countDownLbl.setAlignment(QtCore.Qt.AlignCenter)
-        self.countDownLbl.setObjectName("countDownLbl")
-        self.gridLayout_2.addWidget(self.countDownLbl, 0, 3, 2, 1)
-        self.setCountDownBtn = QtWidgets.QPushButton(self.centralwidget)
-        self.setCountDownBtn.setStyleSheet("QPushButton {\n"
-"    border: 1px solid gray; \n"
-"    border-radius: 10px;     \n"
-"    padding: 5px;\n"
-"    background-color: rgb(225, 225, 225);\n"
-"}\n"
-"")
-        self.setCountDownBtn.setObjectName("setCountDownBtn")
-        self.gridLayout_2.addWidget(self.setCountDownBtn, 0, 4, 2, 1)
-        self.dateEdit = QtWidgets.QDateEdit(self.centralwidget)
-        self.dateEdit.setReadOnly(True)
-        self.dateEdit.setButtonSymbols(QtWidgets.QAbstractSpinBox.NoButtons)
-        self.dateEdit.setDate(QtCore.QDate(2000, 1, 1))
-        self.dateEdit.setObjectName("dateEdit")
-        self.gridLayout_2.addWidget(self.dateEdit, 1, 0, 1, 1)
-        self.setDateBtn = QtWidgets.QPushButton(self.centralwidget)
-        self.setDateBtn.setStyleSheet("QPushButton {\n"
-"    border: 1px solid gray; \n"
-"    border-radius: 10px;     \n"
-"    padding: 5px;\n"
-"    background-color: rgb(225, 225, 225);\n"
-"}\n"
-"")
-        self.setDateBtn.setObjectName("setDateBtn")
-        self.gridLayout_2.addWidget(self.setDateBtn, 1, 1, 1, 1)
-        self.cameraLbl = QtWidgets.QLabel(self.centralwidget)
-        self.cameraLbl.setStyleSheet("QLabel{\n"
-"    background-color: rgba(255, 255, 255, 1);\n"
-"    border: 2px solid black;\n"
-"    border-radius: 5px;\n"
-"}")
-        self.cameraLbl.setText("")
-        self.cameraLbl.setObjectName("cameraLbl")
-        self.cameraLbl.setScaledContents(True)
-        self.gridLayout_2.addWidget(self.cameraLbl, 2, 0, 2, 3)
-        self.chatGPTLbl = QtWidgets.QLabel(self.centralwidget)
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(10)
-        self.chatGPTLbl.setFont(font)
-        self.chatGPTLbl.setStyleSheet("QLabel {\n"
-"    background-color: rgba(255, 255, 255, 0.9);\n"
-"    border: 1px solid black;\n"
-"    border-radius: 5px;\n"
-"    padding: 8px;\n"
-"}")
-        self.chatGPTLbl.setText("")
-        self.chatGPTLbl.setTextFormat(QtCore.Qt.PlainText)
-        self.chatGPTLbl.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
-        self.chatGPTLbl.setWordWrap(True)
-        self.chatGPTLbl.setObjectName("chatGPTLbl")
-        self.gridLayout_2.addWidget(self.chatGPTLbl, 2, 3, 1, 2)
         self.lineEdit = QtWidgets.QLineEdit(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -127,15 +35,180 @@ class Ui_MainWindow(object):
 "    border: 1px solid black;\n"
 "    border-radius: 5px;\n"
 "}")
+        self.lineEdit.setClearButtonEnabled(False)
         self.lineEdit.setObjectName("lineEdit")
-        self.gridLayout_2.addWidget(self.lineEdit, 3, 3, 1, 2)
-        self.gridLayout_2.setColumnStretch(0, 1)
+        self.gridLayout_2.addWidget(self.lineEdit, 2, 1, 1, 1)
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.verticalLayout = QtWidgets.QVBoxLayout()
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.timeEdit = QtWidgets.QTimeEdit(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.timeEdit.sizePolicy().hasHeightForWidth())
+        self.timeEdit.setSizePolicy(sizePolicy)
+        self.timeEdit.setReadOnly(True)
+        self.timeEdit.setButtonSymbols(QtWidgets.QAbstractSpinBox.NoButtons)
+        self.timeEdit.setObjectName("timeEdit")
+        self.timeEdit.setDisplayFormat("hh:mm:ss")
+        self.timeEdit.setStyleSheet("font-size: 18px;")
+        self.verticalLayout.addWidget(self.timeEdit)
+        self.dateEdit = QtWidgets.QDateEdit(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.dateEdit.sizePolicy().hasHeightForWidth())
+        self.dateEdit.setSizePolicy(sizePolicy)
+        self.dateEdit.setReadOnly(True)
+        self.dateEdit.setButtonSymbols(QtWidgets.QAbstractSpinBox.NoButtons)
+        self.dateEdit.setDate(QtCore.QDate(2000, 1, 1))
+        self.dateEdit.setObjectName("dateEdit")
+        self.dateEdit.setDisplayFormat("dd MMMM yyyy")
+        self.dateEdit.setStyleSheet("font-size: 18px;")
+        self.verticalLayout.addWidget(self.dateEdit)
+        self.horizontalLayout.addLayout(self.verticalLayout)
+        spacerItem = QtWidgets.QSpacerItem(100, 20, QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem)
+        self.infoLbl = QtWidgets.QLabel(self.centralwidget)
+        font = QtGui.QFont()
+        font.setFamily("Tahoma")
+        font.setPointSize(12)
+        self.infoLbl.setFont(font)
+        self.infoLbl.setStyleSheet("QLabel {\n"
+"    background-color: rgba(255, 255, 255, 1);\n"
+"    border: 1px solid black;\n"
+"    border-radius: 5px;\n"
+"    padding: 8px\n"
+"}")
+        self.infoLbl.setAlignment(QtCore.Qt.AlignCenter)
+        self.infoLbl.setObjectName("infoLbl")
+        self.horizontalLayout.addWidget(self.infoLbl)
+        spacerItem1 = QtWidgets.QSpacerItem(100, 20, QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem1)
+        self.horizontalLayout.setStretch(0, 2)
+        self.horizontalLayout.setStretch(1, 1)
+        self.horizontalLayout_2.addLayout(self.horizontalLayout)
+        self.countDownLbl = QtWidgets.QLabel(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.countDownLbl.sizePolicy().hasHeightForWidth())
+        self.countDownLbl.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        font.setBold(False)
+        font.setWeight(50)
+        self.countDownLbl.setFont(font)
+        self.countDownLbl.setStyleSheet("QLabel{\n"
+"    background-color: rgba(255, 255, 255, 1);\n"
+"    border: 1px solid black;\n"
+"    border-radius: 5px;\n"
+"}")
+        self.countDownLbl.setAlignment(QtCore.Qt.AlignCenter)
+        self.countDownLbl.setObjectName("countDownLbl")
+        self.horizontalLayout_2.addWidget(self.countDownLbl)
+        spacerItem2 = QtWidgets.QSpacerItem(50, 20, QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem2)
+        self.horizontalLayout_2.setStretch(1, 1)
+        self.horizontalLayout_2.setStretch(2, 1)
+        self.gridLayout_2.addLayout(self.horizontalLayout_2, 0, 0, 1, 1)
+        self.chatgptLbl = QtWidgets.QLabel(self.centralwidget)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(10)
+        self.chatgptLbl.setFont(font)
+        self.chatgptLbl.setStyleSheet("QLabel {\n"
+"    background-color: rgba(255, 255, 255, 0.9);\n"
+"    border: 1px solid black;\n"
+"    border-radius: 5px;\n"
+"    padding: 8px;\n"
+"}")
+        self.chatgptLbl.setText("")
+        self.chatgptLbl.setTextFormat(QtCore.Qt.PlainText)
+        self.chatgptLbl.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.chatgptLbl.setWordWrap(True)
+        self.chatgptLbl.setObjectName("chatgptLbl")
+        self.gridLayout_2.addWidget(self.chatgptLbl, 1, 1, 1, 1)
+        self.gridLayout = QtWidgets.QGridLayout()
+        self.gridLayout.setObjectName("gridLayout")
+        self.pauseBtn = QtWidgets.QPushButton(self.centralwidget)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(8)
+        self.pauseBtn.setFont(font)
+        self.pauseBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.pauseBtn.setStyleSheet("QPushButton {\n"
+"    border: 1px solid gray; \n"
+"    border-radius: 10px;     \n"
+"    padding: 5px;\n"
+"    background-color: rgb(225, 225, 225);\n"
+"}\n"
+"")
+        self.pauseBtn.setObjectName("pauseBtn")
+        self.gridLayout.addWidget(self.pauseBtn, 0, 2, 1, 1)
+        self.resetBtn = QtWidgets.QPushButton(self.centralwidget)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        self.resetBtn.setFont(font)
+        self.resetBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.resetBtn.setStyleSheet("QPushButton {\n"
+"    border: 1px solid gray; \n"
+"    border-radius: 10px;     \n"
+"    padding: 5px;\n"
+"    background-color: rgb(225, 225, 225);\n"
+"}\n"
+"")
+        self.resetBtn.setObjectName("resetBtn")
+        self.gridLayout.addWidget(self.resetBtn, 1, 2, 1, 1)
+        self.countdownEdit = QtWidgets.QTimeEdit(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.countdownEdit.sizePolicy().hasHeightForWidth())
+        self.countdownEdit.setSizePolicy(sizePolicy)
+        self.countdownEdit.setObjectName("countdownEdit")
+        self.countdownEdit.setDisplayFormat("hh:mm:ss")
+        self.gridLayout.addWidget(self.countdownEdit, 0, 0, 1, 1)
+        self.startBtn = QtWidgets.QPushButton(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.startBtn.sizePolicy().hasHeightForWidth())
+        self.startBtn.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(8)
+        font.setBold(False)
+        font.setWeight(50)
+        self.startBtn.setFont(font)
+        self.startBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.startBtn.setStyleSheet("QPushButton {\n"
+"    border: 1px solid gray; \n"
+"    border-radius: 10px;     \n"
+"    padding: 5px;\n"
+"    background-color: rgb(225, 225, 225);\n"
+"}\n"
+"")
+        self.startBtn.setObjectName("startBtn")
+        self.gridLayout.addWidget(self.startBtn, 1, 0, 1, 1)
+        self.gridLayout_2.addLayout(self.gridLayout, 0, 1, 1, 1)
+        self.cameraLbl = QtWidgets.QLabel(self.centralwidget)
+        self.cameraLbl.setStyleSheet("QLabel{\n"
+"    background-color: rgba(255, 255, 255, 1);\n"
+"    border: 1px solid brown;\n"
+"    border-radius: 5px;\n"
+"}")
+        self.cameraLbl.setText("")
+        self.cameraLbl.setObjectName("cameraLbl")
+        self.cameraLbl.setScaledContents(True)
+        self.gridLayout_2.addWidget(self.cameraLbl, 1, 0, 2, 1)
+        self.gridLayout_2.setColumnStretch(0, 2)
         self.gridLayout_2.setColumnStretch(1, 1)
-        self.gridLayout_2.setColumnStretch(2, 3)
-        self.gridLayout_2.setColumnStretch(3, 1)
-        self.gridLayout_2.setColumnStretch(4, 1)
-        self.gridLayout_2.setRowStretch(2, 12)
-        self.gridLayout_2.setRowStretch(3, 1)
+        self.gridLayout_2.setRowStretch(1, 14)
+        self.gridLayout_2.setRowStretch(2, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
@@ -160,20 +233,11 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.setTimeBtn.setText(_translate("MainWindow", "Set Time"))
-        self.countDownLbl.setText(_translate("MainWindow", "00:00"))
-        self.setCountDownBtn.setText(_translate("MainWindow", "Set Time"))
-        self.setDateBtn.setText(_translate("MainWindow", "Set Date"))
+        self.infoLbl.setText(_translate("MainWindow", "User detected: 0"))
+        self.countDownLbl.setText(_translate("MainWindow", "00:00:00"))
+        self.pauseBtn.setText(_translate("MainWindow", "Pause"))
+        self.resetBtn.setText(_translate("MainWindow", "Reset"))
+        self.startBtn.setText(_translate("MainWindow", "START"))
         self.menuHome.setTitle(_translate("MainWindow", "Home"))
         self.menuSchedule.setTitle(_translate("MainWindow", "Schedule"))
         self.actionnew.setText(_translate("MainWindow", "new"))
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
