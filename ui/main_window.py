@@ -86,7 +86,7 @@ class Ui_MainWindow(object):
         self.infoLbl.setAlignment(QtCore.Qt.AlignCenter)
         self.infoLbl.setObjectName("infoLbl")
         self.horizontalLayout.addWidget(self.infoLbl)
-        spacerItem1 = QtWidgets.QSpacerItem(100, 20, QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Minimum)
+        spacerItem1 = QtWidgets.QSpacerItem(150, 20, QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem1)
         self.horizontalLayout.setStretch(0, 2)
         self.horizontalLayout.setStretch(1, 1)
@@ -134,21 +134,6 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.chatgptLbl, 1, 1, 1, 1)
         self.gridLayout = QtWidgets.QGridLayout()
         self.gridLayout.setObjectName("gridLayout")
-        self.pauseBtn = QtWidgets.QPushButton(self.centralwidget)
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(8)
-        self.pauseBtn.setFont(font)
-        self.pauseBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.pauseBtn.setStyleSheet("QPushButton {\n"
-"    border: 1px solid gray; \n"
-"    border-radius: 10px;     \n"
-"    padding: 5px;\n"
-"    background-color: rgb(225, 225, 225);\n"
-"}\n"
-"")
-        self.pauseBtn.setObjectName("pauseBtn")
-        self.gridLayout.addWidget(self.pauseBtn, 0, 2, 1, 1)
         self.resetBtn = QtWidgets.QPushButton(self.centralwidget)
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -161,8 +146,12 @@ class Ui_MainWindow(object):
 "    background-color: rgb(225, 225, 225);\n"
 "}\n"
 "")
+        self.resetBtn.setText("")
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("assets/image/reset_icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.resetBtn.setIcon(icon)
         self.resetBtn.setObjectName("resetBtn")
-        self.gridLayout.addWidget(self.resetBtn, 1, 2, 1, 1)
+        self.gridLayout.addWidget(self.resetBtn, 2, 4, 1, 1)
         self.countdownEdit = QtWidgets.QTimeEdit(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -171,7 +160,7 @@ class Ui_MainWindow(object):
         self.countdownEdit.setSizePolicy(sizePolicy)
         self.countdownEdit.setObjectName("countdownEdit")
         self.countdownEdit.setDisplayFormat("hh:mm:ss")
-        self.gridLayout.addWidget(self.countdownEdit, 0, 0, 1, 1)
+        self.gridLayout.addWidget(self.countdownEdit, 2, 2, 1, 1)
         self.startBtn = QtWidgets.QPushButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -192,12 +181,18 @@ class Ui_MainWindow(object):
 "    background-color: rgb(225, 225, 225);\n"
 "}\n"
 "")
+        self.startBtn.setText("")
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap("assets/image/play_icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(QtGui.QPixmap("assets/image/pause_icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        self.startBtn.setIcon(icon1)
+        self.startBtn.setCheckable(True)
         self.startBtn.setObjectName("startBtn")
-        self.gridLayout.addWidget(self.startBtn, 1, 0, 1, 1)
+        self.gridLayout.addWidget(self.startBtn, 2, 3, 1, 1)
         self.gridLayout_2.addLayout(self.gridLayout, 0, 1, 1, 1)
         self.cameraLbl = QtWidgets.QLabel(self.centralwidget)
         self.cameraLbl.setStyleSheet("QLabel{\n"
-"    background-color: rgba(255, 255, 255, 1);\n"
+"    background-color: rgba(0, 0, 0, 0.9);\n"
 "    border: 1px solid brown;\n"
 "    border-radius: 5px;\n"
 "}")
@@ -205,8 +200,8 @@ class Ui_MainWindow(object):
         self.cameraLbl.setObjectName("cameraLbl")
         self.cameraLbl.setScaledContents(True)
         self.gridLayout_2.addWidget(self.cameraLbl, 1, 0, 2, 1)
-        self.gridLayout_2.setColumnStretch(0, 2)
-        self.gridLayout_2.setColumnStretch(1, 1)
+        self.gridLayout_2.setColumnStretch(0, 8)
+        self.gridLayout_2.setColumnStretch(1, 3)
         self.gridLayout_2.setRowStretch(1, 14)
         self.gridLayout_2.setRowStretch(2, 1)
         MainWindow.setCentralWidget(self.centralwidget)
@@ -228,16 +223,24 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuSchedule.menuAction())
 
         self.retranslateUi(MainWindow)
+        self.resetBtn.clicked.connect(self.resetBtn.animateClick) # type: ignore
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.infoLbl.setText(_translate("MainWindow", "User detected: 0"))
+        self.infoLbl.setText(_translate("MainWindow", "Persons detected: 0"))
         self.countDownLbl.setText(_translate("MainWindow", "00:00:00"))
-        self.pauseBtn.setText(_translate("MainWindow", "Pause"))
-        self.resetBtn.setText(_translate("MainWindow", "Reset"))
-        self.startBtn.setText(_translate("MainWindow", "START"))
         self.menuHome.setTitle(_translate("MainWindow", "Home"))
         self.menuSchedule.setTitle(_translate("MainWindow", "Schedule"))
         self.actionnew.setText(_translate("MainWindow", "new"))
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    MainWindow = QtWidgets.QMainWindow()
+    ui = Ui_MainWindow()
+    ui.setupUi(MainWindow)
+    MainWindow.show()
+    sys.exit(app.exec_())

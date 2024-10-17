@@ -1,52 +1,67 @@
 # region Import Library
 import sys
-from glob import escape
-
-from PyQt5.QtCore import QTimer, Qt, QDateTime
-from PyQt5.QtGui import QImage, QPainter, QPainterPath, QPixmap
+import cv2
+import dlib
+from PyQt5.QtCore import Qt, QThreadPool, QTimer
 from PyQt5.QtWidgets import QMainWindow, QApplication
-from thread.camera_thread import Camera
-from thread.chatgpt_thread import ChatGPT
-from thread.countdown_thread import Countdown
-from thread.datetime_thread import DateTime
+from mediapipe.python.solutions.holistic_test import PoseTest
+
+from thread.camera import Camera
+from thread.chatgpt import ChatGPT
+from thread.countdown import Countdown
+from thread.datetime import DateTime
+from thread.pose import Pose
+from thread.signal import Signal
 from ui.main_window import Ui_MainWindow
 # endregion
 
 class Main(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
+        self.checked_angle = False
         self.setupUi(self)
 
-        self.camera_thread = Camera()
-        self.camera_thread.frame_signal.connect(self.update_frame)
-        self.camera_thread.start()
+        self.frame_counter = 0
 
-        self.chatgpt_thread = ChatGPT(api_key="sk-proj-nyhD5Hio676YUn8Sl3xJMU3urjROw3nNKk"
-                                                    "cLjVpNmy6882LM4CQSy0c73YpR49wnQCo6ODgVkuT3"
-                                                    "BlbkFJVsKvVe4dhyAKWjgNnFFQWUyuA7VcEgZCY_6V"
-                                                    "dSj9JHiuqLzl-f8HCQANxxu9X6W7bf9mdWxgYA")
-        self.lineEdit.returnPressed.connect(self.ask_chatgpt)
-        self.chatgpt_thread.response_signal.connect(self.update_chatgpt_response)
-        self.chatgpt_thread.start()
+        self.detector = dlib.get_frontal_face_detector()
+        self.key = ("sk-proj-nyhD5Hio676YUn8Sl3xJMU3urjROw3nNKkcLjVpNmy6882LM4CQSy0c73YpR49wnQCo6"
+               "ODgVkuT3BlbkFJVsKvVe4dhyAKWjgNnFFQWUyuA7VcEgZCY_6VdSj9JHiuqLzl-f8HCQANxxu9X6"
+               "W7bf9mdWxgYA")
+        self.thread_pool = QThreadPool()  # Khởi tạo Thread Pool
+        self.signal = Signal()
 
-        self.datetime_thread = DateTime()
-        self.datetime_thread.datetime_signal.connect(self.update_datetime)
-        self.datetime_thread.start()
+        self.signal.frame_signal.connect(self.update_frame)
+        self.signal.face_signal.connect(self.update_faces_detected)
+        self.signal.response_signal.connect(self.update_chatgpt_response)
+        self.signal.pose_signal.connect(self.check_angle)
 
-        self.countdown_thread = Countdown()
-        self.countdown_thread.countdown_signal.connect(self.update_countdown)
-        self.countdown_thread.start()
+        self.cap = cv2.VideoCapture(0)
+        self.timer_id = self.startTimer(30)
+
+        self.lineEdit.returnPressed.connect(self.send_chatgpt_request)
+
+        self.signal.datetime_signal.connect(self.update_datetime)
 
         self.startBtn.clicked.connect(self.start_countdown)
-        self.pauseBtn.clicked.connect(self.pause_countdown)
         self.resetBtn.clicked.connect(self.reset_countdown)
 
-    def update_frame(self, frame):
-        height, width, channel = frame.shape
-        bytes_per_line = 3 * width
-        q_img = QImage(frame.data, width, height, bytes_per_line, QImage.Format_RGB888)
-        pixmap = QPixmap.fromImage(q_img)
+        self.countdown = None
+
+        self.pose_timer = QTimer(self)
+        self.pose_timer.timeout.connect(self.update_pose)
+        self.pose_timer.start(1500)
+
+    def update_pose(self):
+        ret, frame = self.cap.read()
+        if ret:
+            pose = Pose(frame, self.detector, self.signal)
+            self.thread_pool.start(pose)
+
+    def update_frame(self, pixmap):
         self.cameraLbl.setPixmap(pixmap)
+
+    def update_faces_detected(self, num):
+        self.infoLbl.setText(f"Faces detected: {num}")
 
     def update_chatgpt_response(self, response):
         self.chatgptLbl.setText(response)
@@ -59,44 +74,43 @@ class Main(QMainWindow, Ui_MainWindow):
     def update_countdown(self, countdown):
         self.countDownLbl.setText(countdown)
 
+    def send_chatgpt_request(self):
+        question = self.lineEdit.text()
+        chatgpt = ChatGPT(self.key, question, self.signal)
+        self.thread_pool.start(chatgpt)
+
+    def timerEvent(self, event):
+        self.frame_counter += 1
+        # current date time
+        current = DateTime(self.signal)
+        self.thread_pool.start(current)
+        # camera
+        ret, frame = self.cap.read()
+        if ret:
+            camera = Camera(frame, self.detector, self.signal, self.checked_angle)
+            self.thread_pool.start(camera)
+
+    def check_angle(self, checked):
+        self.checked_angle = checked
+        print(self.checked_angle)
+
+
     def closeEvent(self, event):
-        self.camera_thread.stop()
-        self.chatgpt_thread.stop()
-        self.datetime_thread.stop()
-        event.accept()
+        self.killTimer(self.timer_id)
+        self.cap.release()
+        self.thread_pool.waitForDone()
 
     def start_countdown(self):
         time = self.countdownEdit.time()
-        self.countdown_thread.start_countdown(time)
 
-    def pause_countdown(self):
-        self.countdown_thread.pause_countdown()
+        self.countdown = Countdown(time, self.signal)
+
+        self.signal.countdown_signal.connect(self.update_countdown)
+
+        self.thread_pool.start(self.countdown)
 
     def reset_countdown(self):
-        self.countdown_thread.reset_countdown()
-
-    @staticmethod
-    def border_radius(image, radius):
-        size = image.size()
-
-        border_img = QImage(size, QImage.Format_ARGB32)
-        border_img.fill(Qt.transparent)  # Nền trong suốt
-
-        painter = QPainter(border_img)
-        painter.setRenderHint(QPainter.Antialiasing)
-
-        path = QPainterPath()
-        path.addRoundedRect(0, 0, size.width(), size.height(), radius, radius)
-        painter.setClipPath(path)
-
-        painter.drawImage(0, 0, image)
-        painter.end()
-
-        return border_img
-
-    def ask_chatgpt(self):
-        question = self.lineEdit.text()
-        self.chatgpt_thread.ask_chatgpt(question)
+        self.countdown.reset()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
