@@ -52,9 +52,9 @@ class Ui_MainWindow(object):
         self.timeEdit.setSizePolicy(sizePolicy)
         self.timeEdit.setReadOnly(True)
         self.timeEdit.setButtonSymbols(QtWidgets.QAbstractSpinBox.NoButtons)
-        self.timeEdit.setObjectName("timeEdit")
         self.timeEdit.setDisplayFormat("hh:mm:ss")
         self.timeEdit.setStyleSheet("font-size: 18px;")
+        self.timeEdit.setObjectName("timeEdit")
         self.verticalLayout.addWidget(self.timeEdit)
         self.dateEdit = QtWidgets.QDateEdit(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
@@ -65,9 +65,9 @@ class Ui_MainWindow(object):
         self.dateEdit.setReadOnly(True)
         self.dateEdit.setButtonSymbols(QtWidgets.QAbstractSpinBox.NoButtons)
         self.dateEdit.setDate(QtCore.QDate(2000, 1, 1))
-        self.dateEdit.setObjectName("dateEdit")
-        self.dateEdit.setDisplayFormat("dd MMMM yyyy")
+        self.dateEdit.setDisplayFormat("MMMM d, yyyy")
         self.dateEdit.setStyleSheet("font-size: 18px;")
+        self.dateEdit.setObjectName("dateEdit")
         self.verticalLayout.addWidget(self.dateEdit)
         self.horizontalLayout.addLayout(self.verticalLayout)
         spacerItem = QtWidgets.QSpacerItem(100, 20, QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Minimum)
@@ -132,35 +132,25 @@ class Ui_MainWindow(object):
         self.chatgptLbl.setWordWrap(True)
         self.chatgptLbl.setObjectName("chatgptLbl")
         self.gridLayout_2.addWidget(self.chatgptLbl, 1, 1, 1, 1)
-        self.gridLayout = QtWidgets.QGridLayout()
-        self.gridLayout.setObjectName("gridLayout")
-        self.resetBtn = QtWidgets.QPushButton(self.centralwidget)
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        self.resetBtn.setFont(font)
-        self.resetBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.resetBtn.setStyleSheet("QPushButton {\n"
-"    border: 1px solid gray; \n"
-"    border-radius: 10px;     \n"
-"    padding: 5px;\n"
-"    background-color: rgb(225, 225, 225);\n"
-"}\n"
-"")
-        self.resetBtn.setText("")
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("assets/image/reset_icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.resetBtn.setIcon(icon)
-        self.resetBtn.setObjectName("resetBtn")
-        self.gridLayout.addWidget(self.resetBtn, 2, 4, 1, 1)
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_5.setObjectName("horizontalLayout_5")
         self.countdownEdit = QtWidgets.QTimeEdit(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setVerticalStretch(2)
         sizePolicy.setHeightForWidth(self.countdownEdit.sizePolicy().hasHeightForWidth())
         self.countdownEdit.setSizePolicy(sizePolicy)
-        self.countdownEdit.setObjectName("countdownEdit")
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.countdownEdit.setFont(font)
         self.countdownEdit.setDisplayFormat("hh:mm:ss")
-        self.gridLayout.addWidget(self.countdownEdit, 2, 2, 1, 1)
+        self.countdownEdit.setObjectName("countdownEdit")
+        self.horizontalLayout_5.addWidget(self.countdownEdit)
+        self.verticalLayout_2.addLayout(self.horizontalLayout_5)
+        self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.startBtn = QtWidgets.QPushButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -182,14 +172,53 @@ class Ui_MainWindow(object):
 "}\n"
 "")
         self.startBtn.setText("")
-        icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap("assets/image/play_icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon1.addPixmap(QtGui.QPixmap("assets/image/pause_icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
-        self.startBtn.setIcon(icon1)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("assets/image/play_icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.startBtn.setIcon(icon)
         self.startBtn.setCheckable(True)
         self.startBtn.setObjectName("startBtn")
-        self.gridLayout.addWidget(self.startBtn, 2, 3, 1, 1)
-        self.gridLayout_2.addLayout(self.gridLayout, 0, 1, 1, 1)
+        self.horizontalLayout_4.addWidget(self.startBtn)
+        spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_4.addItem(spacerItem3)
+        self.pauseBtn = QtWidgets.QPushButton(self.centralwidget)
+        self.pauseBtn.setStyleSheet("QPushButton {\n"
+"    border: 1px solid gray; \n"
+"    border-radius: 10px;     \n"
+"    padding: 5px;\n"
+"    background-color: rgb(225, 225, 225);\n"
+"}\n"
+"")
+        self.pauseBtn.setText("")
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap("assets/image/pause_icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(QtGui.QPixmap("assets/image/resume_icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        self.pauseBtn.setIcon(icon1)
+        self.pauseBtn.setCheckable(True)
+        self.pauseBtn.setEnabled(False)
+        self.pauseBtn.setObjectName("pauseBtn")
+        self.horizontalLayout_4.addWidget(self.pauseBtn)
+        spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_4.addItem(spacerItem4)
+        self.resetBtn = QtWidgets.QPushButton(self.centralwidget)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        self.resetBtn.setFont(font)
+        self.resetBtn.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.resetBtn.setStyleSheet("QPushButton {\n"
+"    border: 1px solid gray; \n"
+"    border-radius: 10px;     \n"
+"    padding: 5px;\n"
+"    background-color: rgb(225, 225, 225);\n"
+"}\n"
+"")
+        self.resetBtn.setText("")
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap("assets/image/reset_icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.resetBtn.setIcon(icon2)
+        self.resetBtn.setObjectName("resetBtn")
+        self.horizontalLayout_4.addWidget(self.resetBtn)
+        self.verticalLayout_2.addLayout(self.horizontalLayout_4)
+        self.gridLayout_2.addLayout(self.verticalLayout_2, 0, 1, 1, 1)
         self.cameraLbl = QtWidgets.QLabel(self.centralwidget)
         self.cameraLbl.setStyleSheet("QLabel{\n"
 "    background-color: rgba(0, 0, 0, 0.9);\n"
@@ -197,8 +226,8 @@ class Ui_MainWindow(object):
 "    border-radius: 5px;\n"
 "}")
         self.cameraLbl.setText("")
-        self.cameraLbl.setObjectName("cameraLbl")
         self.cameraLbl.setScaledContents(True)
+        self.cameraLbl.setObjectName("cameraLbl")
         self.gridLayout_2.addWidget(self.cameraLbl, 1, 0, 2, 1)
         self.gridLayout_2.setColumnStretch(0, 8)
         self.gridLayout_2.setColumnStretch(1, 3)
@@ -223,7 +252,6 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuSchedule.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.resetBtn.clicked.connect(self.resetBtn.animateClick) # type: ignore
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -234,13 +262,3 @@ class Ui_MainWindow(object):
         self.menuHome.setTitle(_translate("MainWindow", "Home"))
         self.menuSchedule.setTitle(_translate("MainWindow", "Schedule"))
         self.actionnew.setText(_translate("MainWindow", "new"))
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())

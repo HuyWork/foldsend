@@ -1,64 +1,85 @@
 # region Import Library
 import sys
+from math import trunc
+
 import cv2
 import dlib
-from PyQt5.QtCore import Qt, QThreadPool, QTimer
+import pygame
+from PyQt5.QtCore import Qt, QThreadPool, QTime, QTimer
+from PyQt5.QtGui import QImage, QPainter, QPainterPath, QPixmap
 from PyQt5.QtWidgets import QMainWindow, QApplication
-from mediapipe.python.solutions.holistic_test import PoseTest
-
-from thread.camera import Camera
-from thread.chatgpt import ChatGPT
-from thread.countdown import Countdown
-from thread.datetime import DateTime
-from thread.pose import Pose
-from thread.signal import Signal
+from service.camera import Camera
+from service.chatgpt import ChatGPT
+from service.countdown import Countdown
+from service.datetime import DateTime
+from service.noise_detection import NoiseDetection
+from service.signal import Signal
 from ui.main_window import Ui_MainWindow
 # endregion
+
+def border_radius(image, radius):
+    size = image.size()
+
+    border_img = QImage(size, QImage.Format_ARGB32)
+    border_img.fill(Qt.transparent)
+
+    painter = QPainter(border_img)
+    painter.setRenderHint(QPainter.Antialiasing)
+
+    path = QPainterPath()
+    path.addRoundedRect(0, 0, size.width(), size.height(), radius, radius)
+    painter.setClipPath(path)
+
+    painter.drawImage(0, 0, image)
+    painter.end()
+
+    return border_img
 
 class Main(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
-        self.checked_angle = False
         self.setupUi(self)
 
-        self.frame_counter = 0
-
         self.detector = dlib.get_frontal_face_detector()
-        self.key = ("sk-proj-nyhD5Hio676YUn8Sl3xJMU3urjROw3nNKkcLjVpNmy6882LM4CQSy0c73YpR49wnQCo6"
-               "ODgVkuT3BlbkFJVsKvVe4dhyAKWjgNnFFQWUyuA7VcEgZCY_6VdSj9JHiuqLzl-f8HCQANxxu9X6"
-               "W7bf9mdWxgYA")
-        self.thread_pool = QThreadPool()  # Khởi tạo Thread Pool
+        self.key = ("sk-proj-kEd4rS5T3se1gaM48OPRl-zUasZkQBcWl9yUQm64TVP9bh_SimLn4Z43Mi6wTThYLdWzp0--MtT3BlbkFJvQ"
+                    "z1Gq_3yzvOVodDjjUz_Y-Jb9cD4YhZTpyGcm1pJcCZ7jNlT0xgFGZAmrx1fDH3ajYlPBEogA")
+        self.thread_pool = QThreadPool()
         self.signal = Signal()
 
         self.signal.frame_signal.connect(self.update_frame)
-        self.signal.face_signal.connect(self.update_faces_detected)
         self.signal.response_signal.connect(self.update_chatgpt_response)
-        self.signal.pose_signal.connect(self.check_angle)
 
         self.cap = cv2.VideoCapture(0)
         self.timer_id = self.startTimer(30)
+        self.check_reset = True
 
         self.lineEdit.returnPressed.connect(self.send_chatgpt_request)
 
         self.signal.datetime_signal.connect(self.update_datetime)
+        self.signal.face_signal.connect(self.update_faces_detected)
 
         self.startBtn.clicked.connect(self.start_countdown)
+        self.pauseBtn.clicked.connect(self.pause_countdown)
         self.resetBtn.clicked.connect(self.reset_countdown)
 
-        self.countdown = None
+        self.camera = Camera(self.cap, self.detector, self.signal)
+        self.camera.start()
 
-        self.pose_timer = QTimer(self)
-        self.pose_timer.timeout.connect(self.update_pose)
-        self.pose_timer.start(1500)
+        self.noise_detection = NoiseDetection()
+        self.noise_detection.start()
 
-    def update_pose(self):
-        ret, frame = self.cap.read()
-        if ret:
-            pose = Pose(frame, self.detector, self.signal)
-            self.thread_pool.start(pose)
+        self.counter = None
 
-    def update_frame(self, pixmap):
-        self.cameraLbl.setPixmap(pixmap)
+        pygame.mixer.init()
+        self.sound_relax = pygame.mixer.Sound("assets/audio/relax.mp3")
+
+
+    def update_frame(self, frame):
+        height, width, channel = frame.shape
+        bytes_per_line = 3 * width
+        q_img = QImage(frame.data, width, height, bytes_per_line, QImage.Format_RGB888)
+        border_img = border_radius(q_img, 5)
+        self.cameraLbl.setPixmap(QPixmap.fromImage(border_img))
 
     def update_faces_detected(self, num):
         self.infoLbl.setText(f"Faces detected: {num}")
@@ -71,46 +92,52 @@ class Main(QMainWindow, Ui_MainWindow):
         self.dateEdit.setDate(current_time.date())
         self.timeEdit.setTime(current_time.time())
 
-    def update_countdown(self, countdown):
-        self.countDownLbl.setText(countdown)
+    def update_countdown(self, time):
+        self.countDownLbl.setText(time.toString("hh:mm:ss"))
 
     def send_chatgpt_request(self):
         question = self.lineEdit.text()
         chatgpt = ChatGPT(self.key, question, self.signal)
         self.thread_pool.start(chatgpt)
 
+    def start_countdown(self):
+        if self.counter is None or not self.counter.running:
+            start_time = self.countdownEdit.time()
+            self.counter = Countdown(start_time, self.signal, parent=self)
+            self.signal.countdown_signal.connect(self.update_countdown)
+            self.counter.start()
+            self.startBtn.setEnabled(False)
+            self.pauseBtn.setEnabled(True)
+            self.camera.update_work(True)
+
+    def pause_countdown(self):
+        if self.counter:
+            if self.pauseBtn.isChecked():
+                self.counter.pause()
+                self.camera.update_work(False)
+            else:
+                self.counter.resume()
+                self.camera.update_work(True)
+
+    def reset_countdown(self):
+        if self.counter:
+            self.counter.reset()
+            self.counter = None
+            self.startBtn.setEnabled(True)
+            self.pauseBtn.setEnabled(False)
+            self.pauseBtn.setChecked(False)
+            self.countDownLbl.setText("00:00:00")
+            self.camera.update_work(False)
+
     def timerEvent(self, event):
-        self.frame_counter += 1
         # current date time
         current = DateTime(self.signal)
         self.thread_pool.start(current)
-        # camera
-        ret, frame = self.cap.read()
-        if ret:
-            camera = Camera(frame, self.detector, self.signal, self.checked_angle)
-            self.thread_pool.start(camera)
-
-    def check_angle(self, checked):
-        self.checked_angle = checked
-        print(self.checked_angle)
-
 
     def closeEvent(self, event):
         self.killTimer(self.timer_id)
         self.cap.release()
         self.thread_pool.waitForDone()
-
-    def start_countdown(self):
-        time = self.countdownEdit.time()
-
-        self.countdown = Countdown(time, self.signal)
-
-        self.signal.countdown_signal.connect(self.update_countdown)
-
-        self.thread_pool.start(self.countdown)
-
-    def reset_countdown(self):
-        self.countdown.reset()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
