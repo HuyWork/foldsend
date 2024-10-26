@@ -1,7 +1,5 @@
-import typing
-
 import pygame
-from PyQt5.QtCore import QTimer, QRunnable, QTime, QThread
+from PyQt5.QtCore import QTime, QThread
 
 
 class Countdown(QThread):
@@ -22,10 +20,9 @@ class Countdown(QThread):
                 self.remaining_time = self.remaining_time.addSecs(-1)
                 self.signal.countdown_signal.emit(self.remaining_time)
             self.sleep(1)
-        self.parent().reset_countdown()
-
         pygame.mixer.stop()
         self.relax_time.play()
+        self.parent().end_countdown()
 
     def pause(self):
         self.paused = True
@@ -33,6 +30,10 @@ class Countdown(QThread):
     def resume(self):
         self.paused = False
 
-    def reset(self):
+    def stop(self):
         self.running = False
         self.quit()
+
+    def reset(self):
+        self.quit()
+        self.terminate()

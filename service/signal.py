@@ -6,4 +6,5 @@ class Signal(QObject):
     face_signal = pyqtSignal(int)
     response_signal = pyqtSignal(str)
     countdown_signal = pyqtSignal(object)
+    infringe_signal = pyqtSignal(object)
     datetime_signal = pyqtSignal(QDateTime)

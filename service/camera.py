@@ -40,6 +40,8 @@ class Camera(QThread):
         self.LOOKING_AWAY_COUNTER = 0
         self.last_alert_time = time.time() - self.cooldown_time
         self.working = False
+        self.check_infringe = False
+        self.change_pose = True
 
         self.mp_pose = mp.solutions.pose
         self.pose = self.mp_pose.Pose(static_image_mode=False, model_complexity=0, min_detection_confidence=0.5,
@@ -57,6 +59,8 @@ class Camera(QThread):
         self.sound_sleeping = pygame.mixer.Sound("assets/audio/bdng.mp3")
         self.sound_looking_away = pygame.mixer.Sound("assets/audio/mttt.mp3")
 
+        self.infringe_count = None
+
     def run(self):
         while self.running:
             ret, frame = self.cap.read()
@@ -71,10 +75,13 @@ class Camera(QThread):
             else:
                 cv2.putText(frame, 'Relax Time', (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2,
                             cv2.LINE_AA)
-
+                if self.check_infringe:
+                    self.check_infringe = False
+                    self.signal.infringe_signal.emit(self.infringe_count)
             self.process_face_detection(frame, faces)
             self.signal.frame_signal.emit(frame)
             self.signal.face_signal.emit(len(faces))
+
 
     def process_face_detection(self, frame, faces):
         for face in faces:
@@ -107,6 +114,7 @@ class Camera(QThread):
                             if elapsed_time_since_sleeping_detected >= 1 and (
                                     time.time() - self.last_sound_play_time) >= 1:
                                 if not pygame.mixer.get_busy():
+                                    self.infringe_count["sleeping"] += 1
                                     self.sound_sleeping.play()
                                     self.last_sound_play_time = time.time()
                                     self.sleeping_detected_start_time = None
@@ -119,6 +127,7 @@ class Camera(QThread):
                 if self.LOOKING_AWAY_COUNTER >= 1:
                     current_time = time.time()
                     if current_time - self.last_alert_time > self.cooldown_time:
+                        self.infringe_count["looking_away"] += 1
                         if not pygame.mixer.get_busy():
                             self.sound_looking_away.play()
                             self.last_alert_time = current_time
@@ -140,9 +149,13 @@ class Camera(QThread):
             if 120 <= angle <= 240:
                 cv2.putText(frame, 'Back straight', (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2,
                             cv2.LINE_AA)
+                self.change_pose = False
             else:
                 cv2.putText(frame, 'Arched back', (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2,
                             cv2.LINE_AA)
+                if not self.change_pose:
+                    self.infringe_count["posture"] += 1
+                    self.change_pose = True
         except Exception as e:
             print(e)
 
@@ -158,14 +171,21 @@ class Camera(QThread):
                         cx, cy = int(lm.x * w), int(lm.y * h)
                         if face_bbox.left() < cx < face_bbox.right() and face_bbox.top() < cy < face_bbox.bottom():
                             if not pygame.mixer.get_busy():
+                                self.infringe_count["hand_detected"] += 1
                                 self.sound_hand_detected.play()
 
     @pyqtSlot(object)
     def update_work(self, working):
-        """Nhận văn bản từ giao diện để cập nhật."""
         self.working = working
+
+    @pyqtSlot(object)
+    def send_infringe(self, checked):
+        self.check_infringe = checked
 
     def stop(self):
         self.running = False
         self.quit()
         self.wait()
+
+    def reset_infringe_count(self):
+        self.infringe_count = {"posture": 0, "hand_detected": 0, "sleeping": 0, "looking_away": 0}

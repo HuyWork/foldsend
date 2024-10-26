@@ -1,11 +1,8 @@
 # region Import Library
 import sys
-from math import trunc
-
 import cv2
 import dlib
-import pygame
-from PyQt5.QtCore import Qt, QThreadPool, QTime, QTimer
+from PyQt5.QtCore import Qt, QThreadPool, QTime
 from PyQt5.QtGui import QImage, QPainter, QPainterPath, QPixmap
 from PyQt5.QtWidgets import QMainWindow, QApplication
 from service.camera import Camera
@@ -13,6 +10,7 @@ from service.chatgpt import ChatGPT
 from service.countdown import Countdown
 from service.datetime import DateTime
 from service.noise_detection import NoiseDetection
+from service.notification import Notification
 from service.signal import Signal
 from ui.main_window import Ui_MainWindow
 # endregion
@@ -61,6 +59,7 @@ class Main(QMainWindow, Ui_MainWindow):
         self.startBtn.clicked.connect(self.start_countdown)
         self.pauseBtn.clicked.connect(self.pause_countdown)
         self.resetBtn.clicked.connect(self.reset_countdown)
+        self.setEmailBtn.clicked.connect(self.set_mail)
 
         self.camera = Camera(self.cap, self.detector, self.signal)
         self.camera.start()
@@ -69,10 +68,6 @@ class Main(QMainWindow, Ui_MainWindow):
         self.noise_detection.start()
 
         self.counter = None
-
-        pygame.mixer.init()
-        self.sound_relax = pygame.mixer.Sound("assets/audio/relax.mp3")
-
 
     def update_frame(self, frame):
         height, width, channel = frame.shape
@@ -101,14 +96,16 @@ class Main(QMainWindow, Ui_MainWindow):
         self.thread_pool.start(chatgpt)
 
     def start_countdown(self):
-        if self.counter is None or not self.counter.running:
-            start_time = self.countdownEdit.time()
-            self.counter = Countdown(start_time, self.signal, parent=self)
-            self.signal.countdown_signal.connect(self.update_countdown)
-            self.counter.start()
-            self.startBtn.setEnabled(False)
-            self.pauseBtn.setEnabled(True)
-            self.camera.update_work(True)
+        start_time = self.countdownEdit.time()
+        if start_time > QTime(0, 0, 0):
+            if self.counter is None or not self.counter.running:
+                self.counter = Countdown(start_time, self.signal, parent=self)
+                self.signal.countdown_signal.connect(self.update_countdown)
+                self.counter.start()
+                self.camera.reset_infringe_count()
+                self.startBtn.setEnabled(False)
+                self.pauseBtn.setEnabled(True)
+                self.camera.update_work(True)
 
     def pause_countdown(self):
         if self.counter:
@@ -119,15 +116,39 @@ class Main(QMainWindow, Ui_MainWindow):
                 self.counter.resume()
                 self.camera.update_work(True)
 
+    def reset_button(self):
+        self.startBtn.setEnabled(True)
+        self.pauseBtn.setEnabled(False)
+        self.pauseBtn.setChecked(False)
+
+    def end_countdown(self):
+        if self.counter:
+            self.reset_button()
+            self.counter.stop()
+            self.counter = None
+            self.camera.update_work(False)
+            self.camera.send_infringe(True)
+        self.signal.infringe_signal.connect(self.send_email)
+
     def reset_countdown(self):
         if self.counter:
+            self.reset_button()
             self.counter.reset()
             self.counter = None
-            self.startBtn.setEnabled(True)
-            self.pauseBtn.setEnabled(False)
-            self.pauseBtn.setChecked(False)
             self.countDownLbl.setText("00:00:00")
             self.camera.update_work(False)
+
+    def set_mail(self):
+        mail = self.emailEdit.text()
+        if mail.strip():
+            self.label.setText(f"{mail}")
+
+    def send_email(self, infringe_count):
+        notification = Notification()
+        notification.set_information(infringe_count, self.label.text())
+        self.thread_pool.start(notification)
+        self.signal.infringe_signal.disconnect(self.send_email)
+
 
     def timerEvent(self, event):
         # current date time
