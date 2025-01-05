@@ -69,12 +69,12 @@ class Camera(QThread):
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             faces = self.detector(gray)
             if self.working:
-                self.process_pose(frame)
                 self.process_hand(frame, faces)
                 self.process_face(frame, faces, gray)
+                self.process_pose(frame)
+
             else:
-                cv2.putText(frame, 'Relax Time', (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2,
-                            cv2.LINE_AA)
+                self.signal.notification_signal.emit(frame, "Relax Time", (0, 255, 0), (50, 50))
                 if self.check_infringe:
                     self.check_infringe = False
                     self.signal.infringe_signal.emit(self.infringe_count)
@@ -113,8 +113,9 @@ class Camera(QThread):
                             elapsed_time_since_sleeping_detected = time.time() - self.sleeping_detected_start_time
                             if elapsed_time_since_sleeping_detected >= 1 and (
                                     time.time() - self.last_sound_play_time) >= 1:
+                                self.signal.notification_signal.emit(frame, "Sleeping", (255, 0, 0), (50, 100))
+                                self.infringe_count["sleeping"] += 1
                                 if not pygame.mixer.get_busy():
-                                    self.infringe_count["sleeping"] += 1
                                     self.sound_sleeping.play()
                                     self.last_sound_play_time = time.time()
                                     self.sleeping_detected_start_time = None
@@ -127,6 +128,7 @@ class Camera(QThread):
                 if self.LOOKING_AWAY_COUNTER >= 1:
                     current_time = time.time()
                     if current_time - self.last_alert_time > self.cooldown_time:
+                        self.signal.notification_signal.emit(frame, "Looking Away", (0, 255, 0), (50, 100))
                         self.infringe_count["looking_away"] += 1
                         if not pygame.mixer.get_busy():
                             self.sound_looking_away.play()
@@ -146,16 +148,16 @@ class Camera(QThread):
             hip = [landmarks[self.mp_pose.PoseLandmark.LEFT_HIP.value].x,
                    landmarks[self.mp_pose.PoseLandmark.LEFT_HIP.value].y]
             angle = calculate_angle(nose, shoulder, hip)
-            if 120 <= angle <= 240:
-                cv2.putText(frame, 'Back straight', (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2,
-                            cv2.LINE_AA)
-                self.change_pose = False
-            else:
-                cv2.putText(frame, 'Arched back', (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2,
-                            cv2.LINE_AA)
-                if not self.change_pose:
-                    self.infringe_count["posture"] += 1
-                    self.change_pose = True
+            print(self.is_error)
+            if not self.is_error:
+                if 120 <= angle <= 240:
+                    self.signal.notification_signal.emit(frame, "Back straight", (0, 255, 0), (50, 50))
+                    self.change_pose = False
+                else:
+                    self.signal.notification_signal.emit(frame, "Arched back", (0, 0, 255), (50, 50))
+                    if not self.change_pose:
+                        self.infringe_count["posture"] += 1
+                        self.change_pose = True
         except Exception as e:
             print(e)
 
@@ -170,8 +172,9 @@ class Camera(QThread):
                         h, w, c = frame.shape
                         cx, cy = int(lm.x * w), int(lm.y * h)
                         if face_bbox.left() < cx < face_bbox.right() and face_bbox.top() < cy < face_bbox.bottom():
+                            self.signal.notification_signal.emit(frame, "Hand Detected", (255, 0, 0), (50, 100))
+                            self.infringe_count["hand_detected"] += 1
                             if not pygame.mixer.get_busy():
-                                self.infringe_count["hand_detected"] += 1
                                 self.sound_hand_detected.play()
 
     @pyqtSlot(object)

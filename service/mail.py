@@ -6,7 +6,7 @@ from email.mime.text import MIMEText
 from PyQt5.QtCore import QRunnable
 
 
-class Notification(QRunnable):
+class Mail(QRunnable):
     def __init__(self):
         super().__init__()
         self.gmail_user = 'canhbaohoctap@gmail.com'

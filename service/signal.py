@@ -8,3 +8,4 @@ class Signal(QObject):
     countdown_signal = pyqtSignal(object)
     infringe_signal = pyqtSignal(object)
     datetime_signal = pyqtSignal(QDateTime)
+    notification_signal = pyqtSignal(object, object, object, object)
