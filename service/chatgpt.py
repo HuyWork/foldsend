@@ -13,7 +13,7 @@ class ChatGPT(QRunnable):
         openai.api_key = self.api_key
         try:
             response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo-16k",
+                model="gpt-3.5-turbo",
                 messages=[
                     {"role": "system", "content": "You are a helpful assistant."},
                     {"role": "user", "content": self.question}

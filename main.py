@@ -10,7 +10,7 @@ from service.chatgpt import ChatGPT
 from service.countdown import Countdown
 from service.datetime import DateTime
 from service.noise_detection import NoiseDetection
-from service.notification import Notification
+from service.mail import Mail
 from service.signal import Signal
 from ui.main_window import Ui_MainWindow
 # endregion
@@ -55,6 +55,7 @@ class Main(QMainWindow, Ui_MainWindow):
 
         self.signal.datetime_signal.connect(self.update_datetime)
         self.signal.face_signal.connect(self.update_faces_detected)
+        self.signal.notification_signal.connect(self.update_notification)
 
         self.startBtn.clicked.connect(self.start_countdown)
         self.pauseBtn.clicked.connect(self.pause_countdown)
@@ -108,6 +109,7 @@ class Main(QMainWindow, Ui_MainWindow):
                 self.camera.update_work(True)
 
     def pause_countdown(self):
+        print("pause")
         if self.counter:
             if self.pauseBtn.isChecked():
                 self.counter.pause()
@@ -144,11 +146,14 @@ class Main(QMainWindow, Ui_MainWindow):
             self.label.setText(f"{mail}")
 
     def send_email(self, infringe_count):
-        notification = Notification()
-        notification.set_information(infringe_count, self.label.text())
-        self.thread_pool.start(notification)
+        mail = Mail()
+        mail.set_information(infringe_count, self.label.text())
+        self.thread_pool.start(mail)
         self.signal.infringe_signal.disconnect(self.send_email)
 
+    def update_notification(self, frame, notification, color, org):
+        cv2.putText(frame, notification, org, cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2,
+                    cv2.LINE_AA)
 
     def timerEvent(self, event):
         # current date time
